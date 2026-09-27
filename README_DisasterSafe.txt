@@ -17,3 +17,5 @@ IMPORTANT
 The reports dashboard uses localStorage. Both pages must be served from the same localhost origin.
 Reports that existed only in old file:// browser-history URLs cannot be automatically imported into localStorage.
 Do not use this local demo as a production emergency database.
+
+URL: https://disaster-safe-kappa.vercel.app/
