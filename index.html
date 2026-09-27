@@ -1,0 +1,4055 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>DisasterSafe</title>
+
+<!-- =====================================================
+                LEAFLET MAP CSS
+====================================================== -->
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+
+
+<style>
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        background: #f4f7fb;
+        color: #222;
+    }
+
+    /* ================= NAVBAR ================= */
+
+    nav {
+        background: #0b1f33;
+        color: white;   
+        padding: 18px 6%;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        position: sticky;
+        top: 0;
+
+        z-index: 1000;
+    }
+    
+    /* EMERGENCY NUMBERS LOOP */
+
+   .emergency-loop {
+    width: 100%;
+    overflow: hidden;
+    background: #ffffff;
+    color: #000000;
+    padding: 12px 0;
+    white-space: nowrap;
+    border-bottom: 1px solid #ddd;
+}
+
+.emergency-track {
+    display: inline-block;
+    padding-left: 100%;
+    animation: emergencyLoop 30s linear infinite;
+}
+
+.emergency-track span {
+    margin-right: 50px;
+    font-weight: bold;
+}
+
+.emergency-track a {
+    color: #000000;
+    text-decoration: none;
+}
+
+@keyframes emergencyLoop {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+           
+
+    .logo {
+        font-size: 25px;
+        font-weight: bold;
+    }
+
+    .logo span {
+        color: #ff4d4d;
+    }
+
+    nav ul {
+        list-style: none;
+        display: flex;
+        gap: 25px;
+    }
+
+    nav ul li a {
+        color: white;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    nav ul li a:hover {
+        color: #ff5252;
+    }
+
+    /* ================= PAGES ================= */
+
+    .page {
+        display: none;
+        min-height: 80vh;
+        padding: 40px 6%;
+    }
+
+    .page.active {
+        display: block;
+    }
+
+    /* ================= HOME ================= */
+
+    .hero {
+        min-height: 500px;
+
+        background:
+            linear-gradient(
+                rgba(0,0,0,.55),
+                rgba(0,0,0,.55)
+            ),
+            url("https://images.unsplash.com/photo-1547683905-f686c993aae5")
+            center/cover;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+
+        color: white;
+        padding: 30px;
+    }
+
+    .hero h1 {
+        font-size: 52px;
+        margin-bottom: 15px;
+    }
+
+    .hero p {
+        font-size: 20px;
+        margin-bottom: 30px;
+    }
+
+    .emergency-btn {
+        background: #e53935;
+        color: white;
+        border: none;
+
+        padding: 16px 30px;
+        border-radius: 8px;
+
+        font-size: 18px;
+        font-weight: bold;
+
+        cursor: pointer;
+    }
+
+    .emergency-btn:hover {
+        background: #b71c1c;
+    }
+
+    /* ================= TITLE ================= */
+
+    .title {
+        text-align: center;
+        margin-bottom: 35px;
+    }
+
+    .title h2 {
+        color: #0b1f33;
+        font-size: 35px;
+        margin-bottom: 10px;
+    }
+
+    .title p {
+        color: #666;
+    }
+
+    /* ================= CARDS ================= */
+
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+
+    .card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+
+        text-align: center;
+
+        box-shadow:
+            0 5px 20px rgba(0,0,0,.08);
+    }
+
+    .icon {
+        font-size: 50px;
+        margin-bottom: 15px;
+    }
+
+    .card h3 {
+        margin-bottom: 10px;
+    }
+
+    .card p {
+        color: #666;
+        line-height: 1.5;
+    }
+
+    .card button {
+        margin-top: 18px;
+
+        background: #0b1f33;
+        color: white;
+
+        border: none;
+
+        padding: 10px 18px;
+
+        border-radius: 6px;
+
+        cursor: pointer;
+    }
+
+    .card button:hover {
+        background: #e53935;
+    }
+
+    /* ================= ALERTS ================= */
+
+    .alert {
+        background: #fff0f0;
+
+        border-left: 7px solid #e53935;
+
+        padding: 25px;
+
+        margin-bottom: 20px;
+
+        border-radius: 8px;
+    }
+
+    .alert h3 {
+        color: #d32f2f;
+        margin-bottom: 10px;
+    }
+
+    .zone-intelligence {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 28px;
+        box-shadow: 0 5px 20px rgba(0,0,0,.08);
+    }
+
+    .zone-intelligence h3 {
+        color: #0b1f33;
+        margin-bottom: 8px;
+    }
+
+    .zone-intelligence p {
+        color: #555;
+        line-height: 1.5;
+    }
+
+    .zone-check-btn {
+        background: #0b1f33;
+        color: white;
+        border: none;
+        border-radius: 7px;
+        padding: 12px 18px;
+        margin-top: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .zone-check-btn:hover {
+        background: #e53935;
+    }
+
+    #zoneResult {
+        display: none;
+        margin-top: 18px;
+        padding: 18px;
+        border-radius: 8px;
+        line-height: 1.6;
+        background: #f4f7fb;
+        border-left: 6px solid #1565c0;
+    }
+
+    #zoneResult.high-risk {
+        background: #fff0f0;
+        border-left-color: #d32f2f;
+    }
+
+    #zoneResult.medium-risk {
+        background: #fff8e1;
+        border-left-color: #f9a825;
+    }
+
+    .india-watch {
+        background: #0b1f33;
+        color: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 28px;
+    }
+
+    .india-watch h3 {
+        margin-bottom: 8px;
+    }
+
+    .india-watch-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .live-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(255,255,255,.12);
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .live-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #5ee082;
+        box-shadow: 0 0 0 0 rgba(94,224,130,.7);
+        animation: livePulse 1.5s infinite;
+    }
+
+    @keyframes livePulse {
+        70% { box-shadow: 0 0 0 7px rgba(94,224,130,0); }
+        100% { box-shadow: 0 0 0 0 rgba(94,224,130,0); }
+    }
+
+    .india-watch p {
+        color: #dbe7f4;
+        line-height: 1.5;
+    }
+
+    .india-watch-btn {
+        background: #ffca28;
+        color: #17293a;
+        border: none;
+        border-radius: 7px;
+        padding: 12px 18px;
+        margin-top: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .india-watch-btn:disabled {
+        opacity: .7;
+        cursor: wait;
+    }
+
+    #indiaNewsResult {
+        margin-top: 18px;
+    }
+
+    .news-item {
+        display: block;
+        background: white;
+        color: #17293a;
+        text-decoration: none;
+        padding: 14px;
+        border-radius: 8px;
+        margin-top: 10px;
+        border-left: 5px solid #1565c0;
+    }
+
+    .news-item.urgent {
+        border-left-color: #e53935;
+    }
+
+    .news-item.watch {
+        border-left-color: #f9a825;
+    }
+
+    .news-item:hover {
+        background: #fff8e1;
+    }
+
+    .news-item strong,
+    .news-item small {
+        display: block;
+    }
+
+    .news-item small {
+        color: #666;
+        margin-top: 5px;
+    }
+
+    .notification-meta {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 7px;
+    }
+
+    .notification-tag {
+        color: white;
+        background: #1565c0;
+        border-radius: 999px;
+        padding: 3px 8px;
+        font-size: 11px;
+        font-weight: bold;
+    }
+
+    .notification-tag.urgent { background: #d32f2f; }
+    .notification-tag.watch { background: #f9a825; color: #332700; }
+
+    /* ================= SAFETY ================= */
+
+    .safety-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+    }
+
+    .safety-card {
+        background: white;
+
+        padding: 30px;
+
+        border-radius: 12px;
+
+        box-shadow:
+            0 5px 20px rgba(0,0,0,.08);
+    }
+
+    .safety-card h3 {
+        color: #d32f2f;
+        margin-bottom: 15px;
+    }
+
+    .safety-card li {
+        margin: 12px 0;
+        line-height: 1.5;
+    }
+
+    /* ================= REPORT ================= */
+
+    .report-container {
+        max-width: 800px;
+
+        margin: auto;
+
+        background: white;
+
+        padding: 35px;
+
+        border-radius: 15px;
+
+        box-shadow:
+            0 5px 25px rgba(0,0,0,.1);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+
+        font-weight: bold;
+
+        margin-bottom: 8px;
+
+        color: #0b1f33;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+
+        padding: 13px;
+
+        border: 1px solid #ccc;
+
+        border-radius: 7px;
+
+        font-size: 15px;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+    }
+
+    /* ================= LOCATION ================= */
+
+    .location-input {
+        display: flex;
+        gap: 10px;
+    }
+
+    .location-input input {
+        flex: 1;
+    }
+
+    .location-btn {
+        background: #0b1f33;
+
+        color: white;
+
+        border: none;
+
+        padding: 0 20px;
+
+        border-radius: 7px;
+
+        cursor: pointer;
+    }
+
+    #locationStatus {
+        display: block;
+
+        margin-top: 8px;
+
+        color: #666;
+    }
+
+    /* ================= SUBMIT ================= */
+
+    .submit-btn {
+        width: 100%;
+
+        padding: 16px;
+
+        background: #e53935;
+
+        color: white;
+
+        border: none;
+
+        border-radius: 8px;
+
+        font-size: 17px;
+
+        font-weight: bold;
+
+        cursor: pointer;
+    }
+
+    .submit-btn:hover {
+        background: #b71c1c;
+    }
+
+    /* ================= RESULT ================= */
+
+    #reportResult {
+        display: none;
+
+        margin-top: 25px;
+
+        padding: 25px;
+
+        background: #e8f5e9;
+
+        border-left: 7px solid #2e7d32;
+
+        border-radius: 8px;
+
+        line-height: 1.8;
+    }
+
+    /* =====================================================
+                    MAP SECTION
+    ====================================================== */
+
+    #mapSection {
+        display: none;
+        margin-top: 30px;
+    }
+
+    .map-box {
+        background: white;
+
+        padding: 25px;
+
+        border-radius: 15px;
+
+        box-shadow:
+            0 5px 25px rgba(0,0,0,.1);
+    }
+
+    .map-title {
+        text-align: center;
+
+        color: #0b1f33;
+
+        margin-bottom: 20px;
+
+        font-size: 28px;
+    }
+
+    .map-info {
+        background: #f4f7fb;
+
+        padding: 18px;
+
+        border-radius: 10px;
+
+        margin-bottom: 20px;
+
+        line-height: 1.8;
+    }
+
+    .map-info strong {
+        color: #0b1f33;
+    }
+
+    #mapStatus {
+        padding: 12px;
+
+        background: #e3f2fd;
+
+        color: #1565c0;
+
+        border-radius: 8px;
+
+        text-align: center;
+
+        margin-bottom: 15px;
+    }
+
+    #map {
+        width: 100%;
+        height: 450px;
+
+        border-radius: 12px;
+
+        overflow: hidden;
+    }
+
+    /* =====================================================
+                EMERGENCY ACTIONS
+    ====================================================== */
+
+    .emergency-actions {
+        margin-top: 25px;
+    }
+
+    .emergency-actions h3 {
+        color: #0b1f33;
+        margin-bottom: 10px;
+        font-size: 24px;
+    }
+
+    .action-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+        gap: 12px;
+
+        margin-top: 15px;
+    }
+
+    .action-btn {
+        border: none;
+
+        padding: 14px 10px;
+
+        border-radius: 10px;
+
+        background: #0b1f33;
+
+        color: white;
+
+        font-size: 15px;
+
+        font-weight: bold;
+
+        cursor: pointer;
+
+        transition: 0.3s;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-3px);
+
+        box-shadow:
+            0 5px 15px rgba(0,0,0,0.25);
+    }
+
+    .map-mode-bar { display:flex; gap:10px; flex-wrap:wrap; margin:15px 0; }
+    .map-mode-btn { border:none; padding:12px 18px; border-radius:10px; background:#0b1f33; color:white; font-weight:bold; cursor:pointer; }
+    .map-mode-btn:hover { background:#b71c1c; }
+    .emergency-loop { margin:15px 0 20px; padding:18px; border-radius:12px; background:#fff4f4; border-left:5px solid #e53935; text-align:center; }
+    .emergency-loop-title { font-size:17px; font-weight:bold; margin-bottom:8px; }
+    .emergency-number { font-size:28px; font-weight:bold; color:#e53935; margin:5px 0; }
+    .emergency-service { font-size:14px; margin-bottom:10px; }
+    .emergency-call-small { border:none; border-radius:8px; padding:10px 20px; background:#e53935; color:white; font-weight:bold; cursor:pointer; }
+
+    /* ================= MAP LEGEND ================= */
+
+    .map-legend {
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 15px;
+
+        margin-top: 15px;
+
+        padding: 15px;
+
+        background: #f4f7fb;
+
+        border-radius: 10px;
+
+        justify-content: center;
+    }
+
+    .legend-item {
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    /* ================= FOOTER ================= */
+
+    footer {
+        background: #071521;
+
+        color: white;
+
+        text-align: center;
+
+        padding: 30px;
+    }
+
+    footer a {
+        color: #ffca28;
+    }
+
+    /* ================= MOBILE ================= */
+
+    @media(max-width: 900px) {
+
+        .cards {
+            grid-template-columns:
+                repeat(2, 1fr);
+        }
+
+        .safety-container {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+    @media(max-width: 768px) {
+
+        .action-grid {
+            grid-template-columns:
+                repeat(2, 1fr);
+        }
+
+    }
+
+    @media(max-width: 600px) {
+
+        nav {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        nav ul {
+            gap: 12px;
+
+            flex-wrap: wrap;
+
+            justify-content: center;
+        }
+
+        .hero h1 {
+            font-size: 35px;
+        }
+
+        .cards {
+            grid-template-columns: 1fr;
+        }
+
+        .location-input {
+            flex-direction: column;
+        }
+
+        .location-btn {
+            padding: 13px;
+        }
+
+        #map {
+            height: 350px;
+        }
+
+        .action-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-btn {
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+</head>
+
+<body>
+
+<!-- =====================================================
+                    NAVIGATION
+===================================================== -->
+
+<nav>
+
+<div class="logo">
+    🚨 <span>Disaster</span>Safe
+</div>
+
+<ul>
+
+    <li>
+        <a onclick="showPage('home')">
+            Home
+        </a>
+    </li>
+
+    <li>
+        <a onclick="showPage('alerts')">
+            Alerts
+        </a>
+    </li>
+
+    <li>
+        <a onclick="showPage('disasters')">
+            Disasters
+        </a>
+    </li>
+
+    <li>
+        <a onclick="showPage('safety')">
+            Safety
+        </a>
+    </li>
+
+    <li>
+        <a onclick="showPage('report')">
+            Report Disaster
+        </a>
+    </li>
+
+    <li>
+        <a href="report.html">
+            All Reports
+        </a>
+    </li>
+   
+
+</ul>
+
+</nav>
+
+<!-- GOVERNMENT EMERGENCY NUMBERS -->
+<div class="emergency-loop">
+    <div class="emergency-track">
+
+        <span>🚨 <a href="tel:112">112 - Emergency</a></span>
+        <span>🚓 <a href="tel:100">100 - Police</a></span>
+        <span>🚒 <a href="tel:101">101 - Fire</a></span>
+        <span>🚑 <a href="tel:108">108 - Ambulance</a></span>
+        <span>👩 <a href="tel:181">181 - Women Helpline</a></span>
+        <span>👶 <a href="tel:1098">1098 - Child Helpline</a></span>
+        <span>🌊 <a href="tel:1078">1078 - Disaster Management</a></span>
+        <span>🆘 <a href="tel:1070">1070 - Relief Commissioner</a></span>
+
+        <!-- Repeat for continuous loop -->
+        <span>🚨 <a href="tel:112">112 - Emergency</a></span>
+        <span>🚓 <a href="tel:100">100 - Police</a></span>
+        <span>🚒 <a href="tel:101">101 - Fire</a></span>
+        <span>🚑 <a href="tel:108">108 - Ambulance</a></span>
+        <span>👩 <a href="tel:181">181 - Women Helpline</a></span>
+        <span>👶 <a href="tel:1098">1098 - Child Helpline</a></span>
+        <span>🌊 <a href="tel:1078">1078 - Disaster Management</a></span>
+        <span>🆘 <a href="tel:1070">1070 - Relief Commissioner</a></span>
+
+    </div>
+</div>
+
+
+<!-- =====================================================
+                    HOME PAGE
+===================================================== -->
+
+<section id="home" class="page active">
+
+<div class="hero">
+
+    <div>
+
+        <h1>
+            Disaster Management System
+        </h1>
+
+        <p>
+            Stay Alert • Stay Safe • Save Lives
+        </p>
+
+        <button
+            class="emergency-btn"
+            onclick="showPage('report')">
+
+            🆘 EMERGENCY HELP
+
+        </button>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+                    ALERTS PAGE
+===================================================== -->
+
+<section id="alerts" class="page">
+
+<div class="title">
+
+    <h2>
+        ⚠️ Disaster Alerts
+    </h2>
+
+    <p>
+        Stay updated about emergency situations.
+    </p>
+
+</div>
+
+<div class="zone-intelligence">
+
+    <h3>🛰️ Zone Intelligence</h3>
+
+    <p>
+        Check your current area for early weather-related risk signals,
+        local conditions, and pre-disaster preparation advice.
+    </p>
+
+    <button
+        type="button"
+        class="zone-check-btn"
+        onclick="analyzeZone()">
+
+        📍 Analyze My Zone
+
+    </button>
+
+    <div
+        id="zoneResult"
+        role="status"
+        aria-live="polite">
+    </div>
+
+</div>
+
+<div class="india-watch">
+
+    <div class="india-watch-header">
+
+        <h3>🇮🇳 India Disaster Watch</h3>
+
+        <span class="live-status">
+            <span class="live-dot"></span>
+            <span id="indiaNewsStatus">LIVE • Waiting for update</span>
+        </span>
+
+    </div>
+
+    <p>
+        Live India-wide notifications for floods, cyclones, earthquakes,
+        landslides, heatwaves, fires, and other disasters.
+    </p>
+
+    <button
+        type="button"
+        id="indiaNewsButton"
+        class="india-watch-btn"
+        onclick="loadIndiaDisasterNews()">
+
+        📰 Check Live Notifications
+
+    </button>
+
+    <div
+        id="indiaNewsResult"
+        role="status"
+        aria-live="polite">
+
+        <p>News reports are not official warnings. Confirm urgent alerts with NDMA and local authorities.</p>
+
+    </div>
+
+</div>
+
+<div class="alert">
+
+    <h3>
+        🔴 Critical Alert
+    </h3>
+
+    <p>
+        No critical disaster alert at this moment.
+        Please follow official government
+        instructions during emergencies.
+    </p>
+
+</div>
+
+<div class="alert">
+
+    <h3>
+        🌧️ Weather Alert
+    </h3>
+
+    <p>
+        Stay alert during heavy rainfall,
+        flooding and severe weather conditions.
+    </p>
+
+</div>
+
+<div class="alert">
+
+    <h3>
+        📢 Emergency Information
+    </h3>
+
+    <p>
+        Keep your phone charged and keep
+        emergency contact numbers available.
+    </p>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+                    DISASTERS PAGE
+===================================================== -->
+
+<section id="disasters" class="page">
+
+<div class="title">
+
+    <h2>
+        🌍 Disaster Categories
+    </h2>
+
+    <p>
+        Learn about different types of disasters.
+    </p>
+
+</div>
+
+<div class="cards">
+
+    <div class="card">
+
+        <div class="icon">
+            🌊
+        </div>
+
+        <h3>
+            Flood
+        </h3>
+
+        <p>
+            Move to higher ground and avoid
+            walking or driving through flood water.
+        </p>
+
+        <button
+            onclick="disasterInfo('Flood')">
+
+            Safety Info
+
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="icon">
+            🌪️
+        </div>
+
+        <h3>
+            Cyclone
+        </h3>
+
+        <p>
+            Stay indoors and follow official
+            cyclone warnings and evacuation orders.
+        </p>
+
+        <button
+            onclick="disasterInfo('Cyclone')">
+
+            Safety Info
+
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="icon">
+            🌎
+        </div>
+
+        <h3>
+            Earthquake
+        </h3>
+
+        <p>
+            Drop, cover and hold during an
+            earthquake.
+        </p>
+
+        <button
+            onclick="disasterInfo('Earthquake')">
+
+            Safety Info
+
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="icon">
+            🔥
+        </div>
+
+        <h3>
+            Fire
+        </h3>
+
+        <p>
+            Leave the building safely and
+            never use elevators during a fire.
+        </p>
+
+        <button
+            onclick="disasterInfo('Fire')">
+
+            Safety Info
+
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="icon">
+            ⛰️
+        </div>
+
+        <h3>
+            Landslide
+        </h3>
+
+        <p>
+            Move away from unstable slopes
+            and affected areas.
+        </p>
+
+        <button
+            onclick="disasterInfo('Landslide')">
+
+            Safety Info
+
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="icon">
+            🌊
+        </div>
+
+        <h3>
+            Tsunami
+        </h3>
+
+        <p>
+            Move quickly to higher ground
+            after a tsunami warning.
+        </p>
+
+        <button
+            onclick="disasterInfo('Tsunami')">
+
+            Safety Info
+
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="icon">
+            🌡️
+        </div>
+
+        <h3>
+            Heatwave
+        </h3>
+
+        <p>
+            Stay hydrated and avoid direct
+            sunlight during extreme heat.
+        </p>
+
+        <button
+            onclick="disasterInfo('Heatwave')">
+
+            Safety Info
+
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="icon">
+            🏢
+        </div>
+
+        <h3>
+            Building Collapse
+        </h3>
+
+        <p>
+            Stay away from damaged structures
+            and contact rescue services.
+        </p>
+
+        <button
+            onclick="disasterInfo('Building Collapse')">
+
+            Safety Info
+
+        </button>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+                    SAFETY PAGE
+===================================================== -->
+
+<section id="safety" class="page">
+
+<div class="title">
+
+    <h2>
+        🛡️ Safety Guidelines
+    </h2>
+
+    <p>
+        Follow these basic precautions.
+    </p>
+
+</div>
+
+
+<div class="safety-container">
+
+    <div class="safety-card">
+
+        <h3>
+            🟢 Before a Disaster
+        </h3>
+
+        <ul>
+
+            <li>
+                Prepare an emergency kit.
+            </li>
+
+            <li>
+                Keep important documents safe.
+            </li>
+
+            <li>
+                Save emergency contact numbers.
+            </li>
+
+            <li>
+                Keep your phone charged.
+            </li>
+
+            <li>
+                Know your nearest safe location.
+            </li>
+
+            <li>
+                Store drinking water and food.
+            </li>
+
+        </ul>
+
+    </div>
+
+
+    <div class="safety-card">
+
+        <h3>
+            🔴 During a Disaster
+        </h3>
+
+        <ul>
+
+            <li>
+                Stay calm.
+            </li>
+
+            <li>
+                Follow official instructions.
+            </li>
+
+            <li>
+                Move to a safe location.
+            </li>
+
+            <li>
+                Avoid damaged buildings.
+            </li>
+
+            <li>
+                Help children and elderly people.
+            </li>
+
+            <li>
+                Do not spread unverified information.
+            </li>
+
+        </ul>
+
+    </div>
+
+
+    <div class="safety-card">
+
+        <h3>
+            🔵 After a Disaster
+        </h3>
+
+        <ul>
+
+            <li>
+                Check yourself and others for injuries.
+            </li>
+
+            <li>
+                Stay away from damaged buildings.
+            </li>
+
+            <li>
+                Report dangerous conditions.
+            </li>
+
+            <li>
+                Follow government instructions.
+            </li>
+
+            <li>
+                Use emergency resources responsibly.
+            </li>
+
+        </ul>
+
+    </div>
+
+
+    <div class="safety-card">
+
+        <h3>
+            🎒 Emergency Kit
+        </h3>
+
+        <ul>
+
+            <li>
+                Drinking water
+            </li>
+
+            <li>
+                First-aid kit
+            </li>
+
+            <li>
+                Flashlight
+            </li>
+
+            <li>
+                Power bank
+            </li>
+
+            <li>
+                Important documents
+            </li>
+
+            <li>
+                Basic food supplies
+            </li>
+
+        </ul>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+                    REPORT PAGE
+===================================================== -->
+
+<section id="report" class="page">
+
+<div class="title">
+
+    <h2>
+        🚨 Report a Disaster
+    </h2>
+
+    <p>
+        Provide information about the emergency.
+    </p>
+
+</div>
+
+
+<div class="report-container">
+
+<form id="disasterForm">
+
+
+    <div class="form-group">
+
+        <label>
+            👤 Full Name
+        </label>
+
+        <input
+            type="text"
+            id="name"
+            placeholder="Enter your name"
+            required
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            📞 Contact Number
+        </label>
+
+        <input
+            type="tel"
+            id="phone"
+            placeholder="Enter mobile number"
+            required
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            📍 Current Location
+        </label>
+
+        <div class="location-input">
+
+            <input
+                type="text"
+                id="userLocation"
+                placeholder="Click Detect"
+                readonly
+                required
+            >
+
+            <button
+                type="button"
+                class="location-btn"
+                onclick="detectLocation()">
+
+                📍 Detect
+
+            </button>
+
+        </div>
+
+        <small id="locationStatus">
+
+            Location not detected.
+
+        </small>
+<div id="location-help-fallback"
+     style="margin-top:8px;font-size:13px;line-height:1.45;color:#555;">
+    💡 GPS fail hone par approximate IP location try hogi.
+    Agar woh bhi fail ho, map par click karke location select karein.
+</div>
+
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            🌪️ Disaster Type
+        </label>
+
+        <select
+            id="disasterType"
+            required>
+
+            <option value="">
+                Select disaster
+            </option>
+
+            <option value="Flood">
+                🌊 Flood
+            </option>
+
+            <option value="Cyclone">
+                🌪️ Cyclone
+            </option>
+
+            <option value="Earthquake">
+                🌎 Earthquake
+            </option>
+
+            <option value="Fire">
+                🔥 Fire
+            </option>
+
+            <option value="Landslide">
+                ⛰️ Landslide
+            </option>
+
+            <option value="Tsunami">
+                🌊 Tsunami
+            </option>
+
+            <option value="Heatwave">
+                🌡️ Heatwave
+            </option>
+
+            <option value="Building Collapse">
+                🏢 Building Collapse
+            </option>
+
+            <option value="Other">
+                ⚠️ Other
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            ⚠️ Danger Level
+        </label>
+
+        <select
+            id="dangerLevel"
+            required>
+
+            <option value="">
+                Select danger level
+            </option>
+
+            <option value="Low">
+                🟢 Low
+            </option>
+
+            <option value="Moderate">
+                🟡 Moderate
+            </option>
+
+            <option value="High">
+                🟠 High
+            </option>
+
+            <option value="Critical">
+                🔴 Critical
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            👥 People Affected
+        </label>
+
+        <input
+            type="number"
+            id="people"
+            min="1"
+            placeholder="Example: 10"
+            required
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            🏠 Current Situation
+        </label>
+
+        <select
+            id="situation"
+            required>
+
+            <option value="">
+                Select situation
+            </option>
+
+            <option>
+                Safe
+            </option>
+
+            <option>
+                Need Assistance
+            </option>
+
+            <option>
+                Evacuation Required
+            </option>
+
+            <option>
+                Medical Emergency
+            </option>
+
+            <option>
+                Trapped
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            📝 Additional Information
+        </label>
+
+        <textarea
+            id="description"
+            rows="5"
+            placeholder="Describe what is happening..."
+        ></textarea>
+
+    </div>
+
+
+    <div>
+
+        <input
+            type="checkbox"
+            id="confirm"
+            required
+        >
+
+        <label for="confirm">
+
+            I confirm that the information
+            provided is correct.
+
+        </label>
+
+    </div>
+
+
+    <br>
+
+
+    <button
+        type="submit"
+        class="submit-btn">
+
+        🚨 SEND DISASTER REPORT
+
+    </button>
+
+
+</form>
+
+
+<!-- =================================================
+                REPORT RESULT
+================================================== -->
+
+<div id="reportResult"></div>
+
+
+<!-- =================================================
+                MAP
+================================================== -->
+
+<section id="mapSection">
+
+<div class="map-box">
+
+    <h2 class="map-title">
+        📍 Disaster Location & Emergency Map
+    </h2>
+
+
+    <div class="map-info">
+
+        <p>
+            <strong>🌪️ Disaster:</strong>
+            <span id="mapDisaster"></span>
+        </p>
+
+        <p>
+            <strong>⚠️ Danger Level:</strong>
+            <span id="mapDanger"></span>
+        </p>
+
+        <p>
+            <strong>📍 Reported Location:</strong>
+            <span id="mapLocation"></span>
+        </p>
+
+        <p>
+            <strong>📡 GPS Coordinates:</strong>
+            <span id="mapCoordinates"></span>
+        </p>
+
+    </div>
+
+
+    <div id="mapStatus">
+
+        📡 Preparing map...
+
+    </div>
+
+
+    <!-- MAP -->
+
+    <div id="map"></div>
+
+
+    <!-- MAP LEGEND -->
+
+    <div class="map-mode-bar">
+        <button class="map-mode-btn" onclick="toggleSatellite()" id="satelliteBtn">🛰️ Satellite Mode</button>
+        <button class="map-mode-btn" onclick="centerOnLocation()">📍 My Location</button>
+    </div>
+
+    <div class="map-legend">
+
+        <div class="legend-item">
+            🚨 Your Location
+        </div>
+
+        <div class="legend-item">
+            🏥 Hospital
+        </div>
+
+        <div class="legend-item">
+            👮 Police
+        </div>
+
+        <div class="legend-item">
+            🔥 Fire Station
+        </div>
+
+        <div class="legend-item">
+            💊 Pharmacy
+        </div>
+
+        <div class="legend-item">
+            🏠 Shelter
+        </div>
+
+        <div class="legend-item">
+            🚑 Ambulance
+        </div>
+
+        <div class="legend-item">
+            🛡️ Safe Zone
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+                EMERGENCY ACTIONS
+    ================================================== -->
+
+    <div class="emergency-actions">
+
+        <h3>
+            🚨 Emergency Actions
+        </h3>
+
+
+        <div class="emergency-loop">
+            <div class="emergency-loop-title">📞 Emergency Numbers</div>
+            <div class="emergency-number" id="emergencyNumberDisplay">112</div>
+            <div class="emergency-service" id="emergencyServiceDisplay">National Emergency Number</div>
+            <button class="emergency-call-small" onclick="callCurrentEmergencyNumber()">📞 Call Now</button>
+        </div>
+
+        <div class="action-grid">
+
+
+            <button
+                class="action-btn call-btn"
+                onclick="callEmergency()">
+
+                📞 Call 112
+
+            </button>
+
+
+            <button
+                class="action-btn"
+                onclick="showNearbyPlaces('hospital')">
+
+                🏥 Hospitals
+
+            </button>
+
+
+            <button
+                class="action-btn"
+                onclick="showNearbyPlaces('police')">
+
+                👮 Police
+
+            </button>
+
+
+            <button
+                class="action-btn"
+                onclick="showNearbyPlaces('fire_station')">
+
+                🔥 Fire Stations
+
+            </button>
+
+
+            <button
+                class="action-btn"
+                onclick="showNearbyPlaces('pharmacy')">
+
+                💊 Pharmacies
+
+            </button>
+
+
+            <button
+                class="action-btn"
+                onclick="showNearbyPlaces('shelter')">
+
+                🏠 Safe Shelters
+
+            </button>
+
+
+            <button
+                class="action-btn"
+                onclick="showNearbyPlaces('ambulance')">
+
+                🚑 Ambulance
+
+            </button>
+
+
+            <button
+                class="action-btn"
+                onclick="showSafeZone()">
+
+                🛡️ Safe Zone
+
+            </button>
+
+
+            <button
+                class="action-btn"
+                onclick="showSafeRoute()">
+
+                🛣️ Safe Route
+
+            </button>
+
+
+            <button
+                class="action-btn share-btn"
+                onclick="shareLocation()">
+
+                📍 Share Location
+
+            </button>
+
+
+            <button
+                class="action-btn sos-btn"
+                onclick="sendSOS()">
+
+                🚨 SEND SOS
+
+            </button>
+
+
+            <button
+                class="action-btn"
+                onclick="showSafetyTipsOnMap()">
+
+                📋 Safety Instructions
+
+            </button>
+
+
+            <button
+                class="action-btn"
+                onclick="clearMapActions()">
+
+                🧹 Clear Map
+
+            </button>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+                    FOOTER
+===================================================== -->
+
+<footer>
+
+<p>
+    © 2026 DisasterSafe
+</p>
+
+<br>
+
+<p>
+
+    For official disaster alerts visit
+
+    <a
+        href="https://sachet.ndma.gov.in/"
+        target="_blank">
+
+        NDMA SACHET
+
+    </a>
+
+</p>
+
+</footer>
+
+
+<!-- =====================================================
+                LEAFLET MAP JAVASCRIPT
+===================================================== -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+
+<script>
+
+/* =====================================================
+                PAGE NAVIGATION
+===================================================== */
+
+function showPage(pageId) {
+
+    const pages =
+        document.querySelectorAll(".page");
+
+    pages.forEach(function(page) {
+
+        page.classList.remove("active");
+
+    });
+
+    document
+        .getElementById(pageId)
+        .classList.add("active");
+
+    if (pageId === "alerts") {
+
+        loadIndiaDisasterNews();
+
+    }
+
+    window.scrollTo({
+
+        top: 0,
+
+        behavior: "smooth"
+
+    });
+
+}
+
+
+/* =====================================================
+                EMERGENCY BUTTON
+===================================================== */
+
+function emergency() {
+
+    alert(
+
+        "🚨 EMERGENCY\n\n" +
+
+        "Please contact your local emergency " +
+        "services immediately.\n\n" +
+
+        "You can also use the Report Disaster " +
+        "page to submit information."
+
+    );
+
+}
+
+
+/* =====================================================
+                DISASTER INFORMATION
+===================================================== */
+
+function disasterInfo(type) {
+
+    let message = "";
+
+    if (type === "Flood") {
+
+        message =
+            "🌊 FLOOD\n\n" +
+            "Move to higher ground.\n" +
+            "Avoid flood water.\n" +
+            "Follow evacuation instructions.";
+
+    }
+
+    else if (type === "Cyclone") {
+
+        message =
+            "🌪️ CYCLONE\n\n" +
+            "Stay indoors.\n" +
+            "Keep emergency supplies ready.\n" +
+            "Follow official warnings.";
+
+    }
+
+    else if (type === "Earthquake") {
+
+        message =
+            "🌎 EARTHQUAKE\n\n" +
+            "Drop, Cover and Hold.\n" +
+            "Stay away from windows.\n" +
+            "Avoid damaged buildings.";
+
+    }
+
+    else if (type === "Fire") {
+
+        message =
+            "🔥 FIRE\n\n" +
+            "Leave the building immediately.\n" +
+            "Do not use elevators.\n" +
+            "Call emergency services.";
+
+    }
+
+    else {
+
+        message =
+            "⚠️ " + type +
+            "\n\nFollow official emergency " +
+            "instructions and move to a safe location.";
+
+    }
+
+    alert(message);
+
+}
+
+
+/* =====================================================
+                LOCATION VARIABLES
+===================================================== */
+
+let latitude = null;
+
+let longitude = null;
+
+
+/* =====================================================
+                DETECT LOCATION
+===================================================== */
+
+function setDetectedLocation(lat, lon, label, sourceText) {
+    latitude = Number(lat);
+    longitude = Number(lon);
+
+    const locationField = document.getElementById("userLocation");
+    const status = document.getElementById("locationStatus");
+
+    const coordinates =
+        latitude.toFixed(6) + ", " + longitude.toFixed(6);
+
+    locationField.value = label || coordinates;
+    status.textContent =
+        "📍 " + (sourceText || "Location detected") +
+        " — GPS: " + coordinates;
+
+    if (disasterMap) {
+        disasterMap.setView([latitude, longitude], 15);
+        disasterMap.invalidateSize(true);
+    }
+}
+
+function enableManualMapLocation() {
+    const status = document.getElementById("locationStatus");
+    const mapSection = document.getElementById("mapSection");
+
+    if (mapSection) mapSection.style.display = "block";
+
+    if (!disasterMap) {
+        try {
+            const el = document.getElementById("map");
+            if (el && typeof L !== "undefined") {
+                disasterMap = L.map("disasterMap").setView(
+                    [20.5937, 78.9629], 5
+                );
+
+                L.tileLayer(
+                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    {
+                        maxZoom: 19,
+                        attribution: "&copy; OpenStreetMap contributors"
+                    }
+                ).addTo(disasterMap);
+            }
+        } catch (e) {
+            console.error("Manual map setup failed:", e);
+        }
+    }
+
+    if (!disasterMap) {
+        status.textContent =
+            "❌ Map unavailable. Please enter location manually.";
+        return;
+    }
+
+    status.textContent =
+        "📌 Map par apni exact location par click karein.";
+
+    disasterMap.getContainer().style.cursor = "crosshair";
+
+    disasterMap.once("click", function (event) {
+        const lat = event.latlng.lat;
+        const lon = event.latlng.lng;
+
+        setDetectedLocation(
+            lat,
+            lon,
+            lat.toFixed(6) + ", " + lon.toFixed(6),
+            "Manual map location selected"
+        );
+
+        disasterMap.getContainer().style.cursor = "";
+
+        if (typeof createDisasterMap === "function") {
+            createDisasterMap(
+                document.getElementById("disasterType").value || "Emergency",
+                document.getElementById("dangerLevel").value || "Unknown",
+                document.getElementById("userLocation").value,
+                lat,
+                lon
+            );
+        }
+    });
+
+    setTimeout(function () {
+        disasterMap.invalidateSize(true);
+    }, 300);
+}
+
+async function detectLocationByIP() {
+    const locationField = document.getElementById("userLocation");
+    const status = document.getElementById("locationStatus");
+
+    locationField.value = "Detecting approximate location...";
+    status.textContent =
+        "🌐 GPS unavailable. Approximate IP location try ho rahi hai...";
+
+    try {
+        const response = await fetch("https://ipapi.co/json/", {
+            headers: { "Accept": "application/json" },
+            cache: "no-store"
+        });
+
+        if (!response.ok) throw new Error("IP location request failed");
+
+        const data = await response.json();
+        const lat = Number(data.latitude);
+        const lon = Number(data.longitude);
+
+        if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+            throw new Error("Invalid IP coordinates");
+        }
+
+        const label = [
+            data.city,
+            data.region,
+            data.country_name
+        ].filter(Boolean).join(", ") ||
+            lat.toFixed(6) + ", " + lon.toFixed(6);
+
+        setDetectedLocation(
+            lat,
+            lon,
+            label,
+            "Approximate IP location detected"
+        );
+
+        status.textContent =
+            "🌐 Approximate location: " + label +
+            " — exact location ke liye GPS allow karein.";
+
+    } catch (error) {
+        console.error("IP location failed:", error);
+
+        locationField.value = "";
+        status.textContent =
+            "📌 Automatic location unavailable. Map par click karke location select karein.";
+
+        enableManualMapLocation();
+    }
+}
+
+function detectLocation() {
+    const locationField = document.getElementById("userLocation");
+    const status = document.getElementById("locationStatus");
+
+    if (!navigator.geolocation) {
+        detectLocationByIP();
+        return;
+    }
+
+    locationField.value = "Detecting GPS location...";
+    status.textContent = "📡 GPS location detect ho rahi hai...";
+
+    navigator.geolocation.getCurrentPosition(
+        async function (position) {
+            const lat = Number(position.coords.latitude);
+            const lon = Number(position.coords.longitude);
+
+            setDetectedLocation(
+                lat,
+                lon,
+                lat.toFixed(6) + ", " + lon.toFixed(6),
+                "GPS location detected"
+            );
+
+            // Optional readable address; GPS coordinates remain primary.
+            try {
+                const response = await fetch(
+                    "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" +
+                    encodeURIComponent(lat) +
+                    "&lon=" + encodeURIComponent(lon),
+                    { headers: { "Accept": "application/json" } }
+                );
+
+                if (response.ok) {
+                    const place = await response.json();
+                    if (place.display_name) {
+                        locationField.value = place.display_name;
+                        status.textContent =
+                            "📍 GPS location detected — " +
+                            lat.toFixed(6) + ", " + lon.toFixed(6);
+                    }
+                }
+            } catch (error) {
+                console.warn("Reverse geocoding unavailable:", error);
+            }
+        },
+        function (error) {
+            console.warn("GPS failed:", error);
+            status.textContent =
+                "⚠️ GPS unavailable. IP location try ho rahi hai...";
+            detectLocationByIP();
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 12000,
+            maximumAge: 60000
+        }
+    );
+}
+
+
+/* =====================================================
+                ZONE INTELLIGENCE
+===================================================== */
+
+function getCurrentPosition() {
+
+    return new Promise(function(resolve, reject) {
+
+        navigator.geolocation.getCurrentPosition(
+
+            resolve,
+
+            reject,
+
+            {
+
+                enableHighAccuracy: true,
+
+                timeout: 15000,
+
+                maximumAge: 300000
+
+            }
+
+        );
+
+    });
+
+}
+
+
+function escapeHtml(value) {
+
+    return String(value).replace(/[&<>"']/g, function(character) {
+
+        return {
+
+            "&": "&amp;",
+
+            "<": "&lt;",
+
+            ">": "&gt;",
+
+            "\"": "&quot;",
+
+            "'": "&#039;"
+
+        }[character];
+
+    });
+
+}
+
+
+async function analyzeZone() {
+
+    const result = document.getElementById("zoneResult");
+
+    result.style.display = "block";
+
+    result.className = "";
+
+    if (!navigator.geolocation) {
+
+        result.textContent = "❌ Location detection is not supported by this browser.";
+
+        return;
+
+    }
+
+    try {
+
+        result.textContent = "🛰️ Detecting your zone and checking the next 12 hours of weather...";
+
+        const position = await getCurrentPosition();
+
+        latitude = position.coords.latitude;
+
+        longitude = position.coords.longitude;
+
+        const weatherUrl =
+
+            "https://api.open-meteo.com/v1/forecast?latitude=" +
+            encodeURIComponent(latitude) +
+            "&longitude=" +
+            encodeURIComponent(longitude) +
+            "&current=temperature_2m,precipitation,rain,wind_gusts_10m,weather_code" +
+            "&hourly=precipitation,precipitation_probability" +
+            "&forecast_days=2&timezone=auto";
+
+        const placeUrl =
+
+            "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" +
+            encodeURIComponent(latitude) +
+            "&lon=" +
+            encodeURIComponent(longitude);
+
+        const responses = await Promise.all([
+
+            fetch(weatherUrl),
+
+            fetch(placeUrl).catch(function() { return null; })
+
+        ]);
+
+        if (!responses[0].ok) {
+
+            throw new Error("Weather service unavailable");
+
+        }
+
+        const weather = await responses[0].json();
+
+        let placeName = "Your detected zone";
+
+        if (responses[1] && responses[1].ok) {
+
+            const place = await responses[1].json();
+
+            placeName = place.display_name || placeName;
+
+        }
+
+        const current = weather.current;
+
+        const hourly = weather.hourly;
+
+        const startIndex = Math.max(
+
+            0,
+
+            hourly.time.findIndex(function(time) {
+
+                return time >= current.time;
+
+            })
+
+        );
+
+        const nextTwelveHours = hourly.precipitation.slice(
+
+            startIndex,
+
+            startIndex + 12
+
+        );
+
+        const expectedRain = nextTwelveHours.reduce(function(total, rain) {
+
+            return total + (rain || 0);
+
+        }, 0);
+
+        const risks = [];
+
+        let riskLevel = "normal";
+
+        if (expectedRain >= 50 || current.precipitation >= 10) {
+
+            risks.push("🌊 <strong>High flood / waterlogging risk:</strong> heavy rainfall is indicated. Avoid low-lying roads and prepare to move to higher ground.");
+
+            riskLevel = "high-risk";
+
+        }
+
+        else if (expectedRain >= 15 || current.precipitation >= 3) {
+
+            risks.push("🌧️ <strong>Pre-disaster rainfall alert:</strong> rain may affect roads and low-lying areas. Keep travel plans flexible and monitor official updates.");
+
+            riskLevel = "medium-risk";
+
+        }
+
+        if (current.wind_gusts_10m >= 70) {
+
+            risks.push("🌪️ <strong>High wind risk:</strong> secure loose objects, avoid trees and damaged structures, and stay indoors if conditions worsen.");
+
+            riskLevel = "high-risk";
+
+        }
+
+        else if (current.wind_gusts_10m >= 45) {
+
+            risks.push("💨 <strong>Pre-disaster wind alert:</strong> strong gusts are possible. Charge devices and avoid unnecessary outdoor activity.");
+
+            if (riskLevel === "normal") riskLevel = "medium-risk";
+
+        }
+
+        if (current.temperature_2m >= 42) {
+
+            risks.push("🔥 <strong>Extreme heat risk:</strong> hydrate, avoid direct sun, and check on children, older adults, and pets.");
+
+            riskLevel = "high-risk";
+
+        }
+
+        else if (current.temperature_2m >= 38) {
+
+            risks.push("🌡️ <strong>Pre-disaster heat alert:</strong> limit strenuous outdoor work, drink water regularly, and plan a cool indoor space.");
+
+            if (riskLevel === "normal") riskLevel = "medium-risk";
+
+        }
+
+        if (risks.length === 0) {
+
+            risks.push("✅ <strong>No elevated weather-related risk detected right now.</strong> Keep your emergency contacts, phone charge, and official alerts available.");
+
+        }
+
+        const maxProbability = Math.max.apply(
+
+            null,
+
+            hourly.precipitation_probability.slice(startIndex, startIndex + 12)
+
+        );
+
+        result.className = riskLevel;
+
+        result.innerHTML =
+
+            "<strong>📍 Zone:</strong> " +
+            escapeHtml(placeName) +
+            "<br><strong>Current conditions:</strong> " +
+            current.temperature_2m.toFixed(1) +
+            "°C, " +
+            current.precipitation.toFixed(1) +
+            " mm precipitation, " +
+            current.wind_gusts_10m.toFixed(0) +
+            " km/h gusts" +
+            "<br><strong>Next 12 hours:</strong> " +
+            expectedRain.toFixed(1) +
+            " mm expected rain; " +
+            maxProbability +
+            "% peak rain probability" +
+            "<hr>" +
+            risks.join("<br><br>") +
+            "<hr><small>Advisory only — this is a weather-based early-risk assessment, not an official disaster warning. Follow NDMA/local authority alerts during an emergency.</small>";
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        result.className = "medium-risk";
+
+        result.textContent =
+            "⚠️ Zone analysis could not be completed. Allow location access and check your internet connection, then try again.";
+
+    }
+
+}
+
+
+/* =====================================================
+                INDIA-WIDE DISASTER NEWS
+===================================================== */
+
+function formatNewsDate(value) {
+
+    if (!value) return "Recent coverage";
+
+    const compactDate = String(value).replace(
+
+        /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2}).*$/,
+
+        "$1-$2-$3T$4:$5:$6Z"
+
+    );
+
+    const date = new Date(compactDate);
+
+    return Number.isNaN(date.getTime())
+
+        ? "Recent coverage"
+
+        : date.toLocaleString();
+
+}
+
+
+let indiaNewsLoading = false;
+
+let indiaNewsLastChecked = null;
+
+
+function getNotificationLevel(article) {
+
+    const text = (article.title || "").toLowerCase();
+
+    if (/(evacuat|death|fatal|red alert|landfall|major flood|severe cyclone|earthquake)/.test(text)) {
+
+        return { className: "urgent", label: "URGENT WATCH" };
+
+    }
+
+    if (/(flood|cyclone|landslide|heatwave|wildfire|heavy rain|storm)/.test(text)) {
+
+        return { className: "watch", label: "PRE-DISASTER WATCH" };
+
+    }
+
+    return { className: "", label: "NEWS UPDATE" };
+
+}
+
+
+async function loadIndiaDisasterNews() {
+
+    const button = document.getElementById("indiaNewsButton");
+
+    const result = document.getElementById("indiaNewsResult");
+
+    const status = document.getElementById("indiaNewsStatus");
+
+    if (indiaNewsLoading) {
+
+        return;
+
+    }
+
+    indiaNewsLoading = true;
+
+    button.disabled = true;
+
+    button.textContent = "🛰️ Loading India-wide news...";
+
+    status.textContent = "LIVE • Checking now";
+
+    result.innerHTML = "<p>Checking recent coverage from across India...</p>";
+
+    const query =
+
+        "India (flood OR cyclone OR earthquake OR landslide OR heatwave OR wildfire OR disaster)";
+
+    const newsUrl =
+
+        "https://api.gdeltproject.org/api/v2/doc/doc?query=" +
+        encodeURIComponent(query) +
+        "&mode=artlist&format=json&maxrecords=12&timespan=7d&sort=datedesc";
+
+    try {
+
+        const response = await fetch(newsUrl);
+
+        if (!response.ok) {
+
+            throw new Error("News service unavailable");
+
+        }
+
+        const feed = await response.json();
+
+        const articles = (feed.articles || []).filter(function(article) {
+
+            try {
+
+                return /^https?:$/.test(new URL(article.url).protocol);
+
+            }
+
+            catch (error) {
+
+                return false;
+
+            }
+
+        });
+
+        if (articles.length === 0) {
+
+            result.innerHTML =
+
+                "<p>No matching India-wide disaster reports were found in the last seven days. Check official alerts for urgent information.</p>";
+
+            return;
+
+        }
+
+        result.innerHTML =
+
+            "<p><strong>Live India-wide notifications</strong> — news coverage, not official alerts.</p>" +
+
+            articles.slice(0, 8).map(function(article) {
+
+                const source =
+
+                    article.domain ||
+
+                    "News source";
+
+                const level = getNotificationLevel(article);
+
+                return (
+
+                    "<a class=\"news-item " +
+                    level.className +
+                    "\" href=\"" +
+                    escapeHtml(article.url) +
+                    "\" target=\"_blank\" rel=\"noopener\">" +
+                    "<span class=\"notification-meta\">" +
+                    "<span class=\"notification-tag " +
+                    level.className +
+                    "\">" +
+                    level.label +
+                    "</span>" +
+                    "<small>" +
+                    escapeHtml(source) +
+                    " • " +
+                    escapeHtml(formatNewsDate(article.seendate)) +
+                    "</small></span>" +
+                    "<strong>" +
+                    escapeHtml(article.title || "Untitled report") +
+                    "</strong></a>"
+
+                );
+
+            }).join("");
+
+        indiaNewsLastChecked = new Date();
+
+        status.textContent =
+
+            "LIVE • Updated " +
+            indiaNewsLastChecked.toLocaleTimeString();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        result.innerHTML =
+
+            "<p>⚠️ Live India-wide news could not be loaded. " +
+            "<a href=\"https://news.google.com/search?q=India%20disaster%20flood%20cyclone%20earthquake\" target=\"_blank\" rel=\"noopener\">Open India disaster news</a>.</p>";
+
+        status.textContent = "LIVE • Connection unavailable";
+
+    }
+
+    finally {
+
+        indiaNewsLoading = false;
+
+        button.disabled = false;
+
+        button.textContent = "🔄 Refresh Live Notifications";
+
+    }
+
+}
+
+
+/* Refresh the India-wide notification feed every five minutes while visible. */
+setInterval(function() {
+
+    const alertsPage = document.getElementById("alerts");
+
+    if (alertsPage && alertsPage.classList.contains("active")) {
+
+        loadIndiaDisasterNews();
+
+    }
+
+}, 300000);
+
+
+
+/* =====================================================
+                ROBUST DISASTER MAP
+   Leaflet + OpenStreetMap + OSRM + Overpass
+===================================================== */
+
+let disasterMap = null;
+let disasterMarker = null;
+let dangerCircle = null;
+let emergencyMarkers = [];
+let lastReport = null;
+let streetLayer = null;
+let satelliteLayer = null;
+let satelliteMode = false;
+
+/* Safe HTML for values coming from forms/API responses. */
+function mapEscape(value) {
+    return String(value ?? "").replace(/[&<>"']/g, function (c) {
+        return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        }[c];
+    });
+}
+
+/* Create/reuse the Leaflet map. The section is made visible BEFORE
+   Leaflet is initialized; this avoids the common hidden-container bug. */
+function createDisasterMap(disaster, danger, reportedLocation) {
+
+    const mapSection = document.getElementById("mapSection");
+    const mapElement = document.getElementById("map");
+
+    if (!mapSection || !mapElement) {
+        console.error("Map HTML elements are missing.");
+        return false;
+    }
+
+    if (typeof L === "undefined") {
+        document.getElementById("mapStatus").innerHTML =
+            "❌ Map library could not be loaded. Check your internet connection and reload the page.";
+        return false;
+    }
+
+    if (latitude === null || longitude === null ||
+        !Number.isFinite(Number(latitude)) ||
+        !Number.isFinite(Number(longitude))) {
+        document.getElementById("mapStatus").textContent =
+            "❌ Valid GPS coordinates are required before opening the map.";
+        return false;
+    }
+
+    mapSection.style.display = "block";
+
+    document.getElementById("mapDisaster").textContent = disaster;
+    document.getElementById("mapDanger").textContent = danger;
+    document.getElementById("mapLocation").textContent = reportedLocation;
+    document.getElementById("mapCoordinates").textContent =
+        Number(latitude).toFixed(6) + ", " + Number(longitude).toFixed(6);
+
+    document.getElementById("mapStatus").textContent =
+        "🗺️ Loading your emergency location...";
+
+    const center = [Number(latitude), Number(longitude)];
+
+    try {
+        if (!disasterMap) {
+            disasterMap = L.map(mapElement, {
+                zoomControl: true,
+                attributionControl: true
+            }).setView(center, 15);
+
+            streetLayer = L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+                    maxZoom: 20,
+                    attribution: "&copy; OpenStreetMap contributors"
+                }
+            ).addTo(disasterMap);
+
+            satelliteLayer = L.tileLayer(
+                "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+                { maxZoom: 19, attribution: "Tiles &copy; Esri" }
+            );
+
+            disasterMap.on("tileerror", function () {
+                document.getElementById("mapStatus").textContent =
+                    "⚠️ Some map tiles could not be loaded. Check your internet connection.";
+            });
+        } else {
+            disasterMap.setView(center, 15);
+        }
+
+        if (disasterMarker) {
+            disasterMap.removeLayer(disasterMarker);
+        }
+
+        if (dangerCircle) {
+            disasterMap.removeLayer(dangerCircle);
+        }
+
+        clearEmergencyMarkers();
+
+        disasterMarker = L.marker(center)
+            .addTo(disasterMap)
+            .bindPopup(
+                "<b>🚨 DISASTER LOCATION</b><br><br>" +
+                "<b>Disaster:</b> " + mapEscape(disaster) + "<br>" +
+                "<b>Danger:</b> " + mapEscape(danger) + "<br>" +
+                "<b>Location:</b> " + mapEscape(reportedLocation) + "<br>" +
+                "<b>GPS:</b> " + center[0].toFixed(6) + ", " +
+                center[1].toFixed(6)
+            )
+            .openPopup();
+
+        dangerCircle = L.circle(center, {
+            radius: 1000,
+            color: "#e53935",
+            fillColor: "#e53935",
+            fillOpacity: 0.10,
+            weight: 2
+        }).addTo(disasterMap);
+
+        setTimeout(function () {
+            disasterMap.invalidateSize(true);
+            disasterMap.setView(center, 15);
+            document.getElementById("mapStatus").textContent =
+                "✅ Live GPS location shown on the map.";
+        }, 250);
+
+        return true;
+
+    } catch (error) {
+        console.error("Leaflet map error:", error);
+        document.getElementById("mapStatus").innerHTML =
+            "❌ Map could not be created. Please reload the page and try again.";
+        return false;
+    }
+}
+
+/* =====================================================
+                REPORT FORM
+===================================================== */
+
+/* =====================================================
+                BROWSER HISTORY REPORT STORAGE
+   The submitted report is encoded into the URL hash and a
+   history entry is created with pushState(). This means the
+   report can be reopened using the browser Back/Forward
+   buttons and the URL stored in browser history.
+
+   IMPORTANT:
+   The URL can contain personal information. Do not use this
+   method for sensitive/production data. For production use,
+   store the report on a secure backend and keep only a report
+   ID in the URL.
+===================================================== */
+
+function encodeReportForHistory(report) {
+    return encodeURIComponent(JSON.stringify(report));
+}
+
+function decodeReportFromHistory() {
+    const hash = window.location.hash;
+
+    if (!hash.startsWith("#report=")) {
+        return null;
+    }
+
+    try {
+        const encoded = hash.substring("#report=".length);
+        return JSON.parse(decodeURIComponent(encoded));
+    } catch (error) {
+        console.error("Could not restore report from browser history:", error);
+        return null;
+    }
+}
+
+function showReportFromHistory(report, scrollToMap) {
+    if (!report) return;
+
+    lastReport = report;
+    latitude = Number(report.latitude);
+    longitude = Number(report.longitude);
+
+    const result = document.getElementById("reportResult");
+    result.style.display = "block";
+
+    result.innerHTML = `
+        <h3>✅ Report Loaded from Browser History</h3>
+        <p><strong>Report ID:</strong> ${mapEscape(report.id)}</p>
+        <p><strong>Name:</strong> <span id="resultName"></span></p>
+        <p><strong>Contact:</strong> <span id="resultPhone"></span></p>
+        <p><strong>Disaster:</strong> ${mapEscape(report.disaster)}</p>
+        <p><strong>Danger:</strong> ${mapEscape(report.danger)}</p>
+        <p><strong>People Affected:</strong> ${mapEscape(report.people)}</p>
+        <p><strong>Situation:</strong> ${mapEscape(report.situation)}</p>
+        <p><strong>Location:</strong> <span id="resultLocation"></span></p>
+        <p><strong>GPS:</strong> ${Number(report.latitude).toFixed(6)}, ${Number(report.longitude).toFixed(6)}</p>
+        <p><strong>Response Team:</strong> ${mapEscape(report.team)}</p>
+        <p><strong>Description:</strong> <span id="resultDescription"></span></p>
+        <hr>
+        <p>📜 This report was restored from your browser history.</p>
+        <p>📍 GPS location is attached to the saved report.</p>
+    `;
+
+    document.getElementById("resultName").textContent = report.name || "";
+    document.getElementById("resultPhone").textContent = report.phone || "";
+    document.getElementById("resultLocation").textContent = report.reportedLocation || "";
+    document.getElementById("resultDescription").textContent =
+        report.description || "No additional information";
+
+    document.getElementById("name").value = report.name || "";
+    document.getElementById("phone").value = report.phone || "";
+    document.getElementById("userLocation").value = report.reportedLocation || "";
+    document.getElementById("disasterType").value = report.disaster || "";
+    document.getElementById("dangerLevel").value = report.danger || "";
+    document.getElementById("people").value = report.people || "";
+    document.getElementById("situation").value = report.situation || "";
+    document.getElementById("description").value = report.description || "";
+
+    document.getElementById("locationStatus").textContent =
+        "📜 Location restored from browser history.";
+
+    const mapReady = createDisasterMap(
+        report.disaster,
+        report.danger,
+        report.reportedLocation
+    );
+
+    if (mapReady && scrollToMap) {
+        setTimeout(function () {
+            document.getElementById("mapSection").scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }, 350);
+    }
+}
+
+document.getElementById("disasterForm").addEventListener("submit", function (event) {
+
+    event.preventDefault();
+
+    if (latitude === null || longitude === null) {
+        alert("📍 Please click Detect and allow location access first.");
+        return;
+    }
+
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const disaster = document.getElementById("disasterType").value;
+    const danger = document.getElementById("dangerLevel").value;
+    const people = document.getElementById("people").value;
+    const situation = document.getElementById("situation").value;
+    const description = document.getElementById("description").value.trim();
+    const reportedLocation = document.getElementById("userLocation").value;
+
+    const reportID = "DS-" + Date.now().toString().slice(-8);
+
+    let team = "🚨 Local Emergency Response Team";
+
+    if (disaster === "Fire") {
+        team = "🔥 Fire & Rescue Team";
+    } else if (
+        disaster === "Flood" ||
+        disaster === "Cyclone" ||
+        disaster === "Tsunami" ||
+        disaster === "Landslide"
+    ) {
+        team = "🌊 Disaster Management & Rescue Team";
+    } else if (
+        disaster === "Earthquake" ||
+        disaster === "Building Collapse"
+    ) {
+        team = "🚒 Search & Rescue Team";
+    }
+
+    lastReport = {
+        id: reportID,
+        name,
+        phone,
+        disaster,
+        danger,
+        people,
+        situation,
+        description,
+        reportedLocation,
+        latitude: Number(latitude),
+        longitude: Number(longitude),
+        team,
+        savedAt: new Date().toISOString()
+    };
+
+    /*
+      Create a NEW browser-history entry.
+      The report is stored in the URL hash, so Back/Forward can
+      return to this exact submitted report.
+    */
+    const historyUrl =
+        window.location.pathname +
+        window.location.search +
+        "#report=" +
+        encodeReportForHistory(lastReport);
+
+    try {
+        window.history.pushState(
+            { reportId: reportID },
+            "DisasterSafe - " + reportID,
+            historyUrl
+        );
+
+        document.title = "DisasterSafe - " + reportID;
+    } catch (error) {
+        console.error("Could not create browser history entry:", error);
+    }
+
+
+    /* Save report for the separate report.html dashboard. */
+    try {
+        const STORAGE_KEY = "disasterSafeReports";
+        const savedReports = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+        const cleanReport = {
+            id: lastReport.id,
+            name: lastReport.name,
+            phone: lastReport.phone,
+            disaster: lastReport.disaster,
+            danger: lastReport.danger,
+            people: Number(lastReport.people) || 0,
+            situation: lastReport.situation,
+            description: lastReport.description,
+            reportedLocation: lastReport.reportedLocation,
+            latitude: Number(lastReport.latitude),
+            longitude: Number(lastReport.longitude),
+            team: lastReport.team,
+            savedAt: lastReport.savedAt
+        };
+
+        savedReports.push(cleanReport);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(savedReports));
+    } catch (storageError) {
+        console.error("Could not save report to localStorage:", storageError);
+    }
+
+    showReportFromHistory(lastReport, true);
+
+    if (danger === "Critical") {
+        alert(
+            "🚨 CRITICAL EMERGENCY\n\n" +
+            "Report ID: " + reportID +
+            "\n\nPlease call 112 for immediate emergency assistance."
+        );
+    } else {
+        alert(
+            "✅ Disaster report submitted and saved in browser history!\n\n" +
+            "Report ID: " + reportID
+        );
+    }
+});
+
+/* Restore a report when the page is opened directly with a saved
+   history URL or when the browser Back/Forward button is used. */
+window.addEventListener("popstate", function () {
+    const report = decodeReportFromHistory();
+
+    if (report) {
+        showPage("report");
+        showReportFromHistory(report, false);
+        document.title = "DisasterSafe - " + (report.id || "Report");
+    }
+});
+
+window.addEventListener("DOMContentLoaded", function () {
+    const report = decodeReportFromHistory();
+
+    if (report) {
+        showPage("report");
+        showReportFromHistory(report, false);
+        document.title = "DisasterSafe - " + (report.id || "Report");
+    }
+});
+
+/* =====================================================
+                CALL 112
+===================================================== */
+
+function toggleSatellite() {
+    if (!disasterMap || !streetLayer || !satelliteLayer) { alert("📍 Submit a report and detect your location first."); return; }
+    if (satelliteMode) {
+        disasterMap.removeLayer(satelliteLayer); streetLayer.addTo(disasterMap); satelliteMode=false;
+        document.getElementById("satelliteBtn").textContent="🛰️ Satellite Mode";
+        document.getElementById("mapStatus").textContent="🗺️ Street map mode enabled.";
+    } else {
+        disasterMap.removeLayer(streetLayer); satelliteLayer.addTo(disasterMap); satelliteMode=true;
+        document.getElementById("satelliteBtn").textContent="🗺️ Street Map Mode";
+        document.getElementById("mapStatus").textContent="🛰️ Satellite imagery enabled. Imagery is not live video.";
+    }
+    setTimeout(function(){ disasterMap.invalidateSize(true); },200);
+}
+
+function centerOnLocation() {
+    if (!disasterMap || latitude === null || longitude === null) { alert("📍 Detect your location first."); return; }
+    disasterMap.setView([Number(latitude),Number(longitude)],16,{animate:true});
+    if (disasterMarker) disasterMarker.openPopup();
+}
+
+const emergencyNumbers = [
+    {number:"112",service:"National Emergency Number"},
+    {number:"108",service:"Ambulance / Medical Emergency"},
+    {number:"101",service:"Fire & Rescue"},
+    {number:"100",service:"Police Emergency"},
+    {number:"1098",service:"Child Helpline"}
+];
+let emergencyLoopIndex=0;
+let currentEmergencyNumber=emergencyNumbers[0];
+
+function updateEmergencyNumber(){
+    currentEmergencyNumber=emergencyNumbers[emergencyLoopIndex];
+    const n=document.getElementById("emergencyNumberDisplay");
+    const t=document.getElementById("emergencyServiceDisplay");
+    if(n)n.textContent=currentEmergencyNumber.number;
+    if(t)t.textContent=currentEmergencyNumber.service;
+}
+
+function callCurrentEmergencyNumber(){
+    if(confirm("🚨 Call "+currentEmergencyNumber.number+" for "+currentEmergencyNumber.service+"?")){
+        window.location.href="tel:"+currentEmergencyNumber.number;
+    }
+}
+
+function callEmergency() {
+    if (confirm("🚨 Do you want to call Emergency Number 112?")) {
+        window.location.href = "tel:112";
+    }
+}
+
+/* =====================================================
+                NEARBY PLACES
+   Uses Overpass. If all public Overpass servers fail,
+   the user gets a Google Maps fallback instead of a broken UI.
+===================================================== */
+
+const placeDefinitions = {
+    hospital: {
+        label: "hospital",
+        icon: "🏥",
+        filters: `
+            nwr["amenity"="hospital"](around:5000,LAT,LON);
+        `
+    },
+    police: {
+        label: "police station",
+        icon: "👮",
+        filters: `
+            nwr["amenity"="police"](around:5000,LAT,LON);
+        `
+    },
+    fire_station: {
+        label: "fire station",
+        icon: "🔥",
+        filters: `
+            nwr["amenity"="fire_station"](around:5000,LAT,LON);
+        `
+    },
+    pharmacy: {
+        label: "pharmacy",
+        icon: "💊",
+        filters: `
+            nwr["amenity"="pharmacy"](around:5000,LAT,LON);
+        `
+    },
+    shelter: {
+        label: "shelter",
+        icon: "🏠",
+        filters: `
+            nwr["amenity"="shelter"](around:5000,LAT,LON);
+            nwr["emergency"="shelter"](around:5000,LAT,LON);
+            nwr["social_facility"="shelter"](around:5000,LAT,LON);
+        `
+    },
+    ambulance: {
+        label: "ambulance station",
+        icon: "🚑",
+        filters: `
+            nwr["emergency"="ambulance_station"](around:5000,LAT,LON);
+            nwr["amenity"="hospital"](around:5000,LAT,LON);
+        `
+    }
+};
+
+function buildOverpassQuery(type) {
+    const def = placeDefinitions[type];
+    if (!def) return null;
+
+    const filters = def.filters
+        .replaceAll("LAT", Number(latitude))
+        .replaceAll("LON", Number(longitude));
+
+    return `
+        [out:json][timeout:15];
+        (
+            ${filters}
+        );
+        out center tags;
+    `;
+}
+
+async function fetchOverpass(query) {
+
+    const servers = [
+        "https://overpass-api.de/api/interpreter",
+        "https://overpass.kumi.systems/api/interpreter",
+        "https://overpass.private.coffee/api/interpreter"
+    ];
+
+    for (const server of servers) {
+        try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 18000);
+
+            const response = await fetch(
+                server + "?data=" + encodeURIComponent(query),
+                {
+                    method: "GET",
+                    signal: controller.signal
+                }
+            );
+
+            clearTimeout(timeout);
+
+            if (!response.ok) continue;
+
+            const data = await response.json();
+
+            if (data && Array.isArray(data.elements)) {
+                return data;
+            }
+
+        } catch (error) {
+            console.warn("Overpass failed:", server, error);
+        }
+    }
+
+    throw new Error("All nearby-place services failed.");
+}
+
+async function showNearbyPlaces(type) {
+
+    if (!placeDefinitions[type]) return;
+
+    if (
+        latitude === null ||
+        longitude === null ||
+        !disasterMap
+    ) {
+        alert("📍 Submit a report and detect your location first.");
+        return;
+    }
+
+    clearEmergencyMarkers();
+
+    const def = placeDefinitions[type];
+
+    document.getElementById("mapStatus").textContent =
+        "🔎 Finding nearby " + def.label + "...";
+
+    try {
+
+        const query = buildOverpassQuery(type);
+        const data = await fetchOverpass(query);
+
+        if (!data.elements.length) {
+            document.getElementById("mapStatus").textContent =
+                "❌ No nearby " + def.label + " found in OpenStreetMap.";
+
+            return;
+        }
+
+        const bounds = [
+            [Number(latitude), Number(longitude)]
+        ];
+
+        data.elements.slice(0, 30).forEach(function (place) {
+
+            let lat = null;
+            let lon = null;
+
+            if (place.type === "node") {
+                lat = place.lat;
+                lon = place.lon;
+            } else if (place.center) {
+                lat = place.center.lat;
+                lon = place.center.lon;
+            }
+
+            if (!Number.isFinite(Number(lat)) ||
+                !Number.isFinite(Number(lon))) {
+                return;
+            }
+
+            lat = Number(lat);
+            lon = Number(lon);
+
+            const name =
+                place.tags && place.tags.name
+                    ? place.tags.name
+                    : "Nearby " + def.label;
+
+            const marker = L.marker([lat, lon]).addTo(disasterMap);
+
+            const routeButton =
+                `<button type="button" onclick="routeToPlace(${lat},${lon},'${mapEscape(name).replace(/'/g, "\\'")}')"
+                    style="margin-top:8px;padding:8px 12px;border:0;border-radius:6px;background:#0b1f33;color:#fff;cursor:pointer;">
+                    🛣️ Route Here
+                </button>`;
+
+            marker.bindPopup(`
+                <div style="min-width:210px">
+                    <h3>${def.icon} ${mapEscape(name)}</h3>
+                    <hr>
+                    <p><b>Type:</b> ${mapEscape(def.label)}</p>
+                    <p><b>GPS:</b> ${lat.toFixed(6)}, ${lon.toFixed(6)}</p>
+                    ${routeButton}
+                </div>
+            `);
+
+            emergencyMarkers.push(marker);
+            bounds.push([lat, lon]);
+        });
+
+        if (bounds.length > 1) {
+            disasterMap.fitBounds(bounds, {
+                padding: [30, 30],
+                maxZoom: 16
+            });
+        }
+
+        document.getElementById("mapStatus").textContent =
+            "✅ Nearby " + def.label + " locations are shown.";
+
+    } catch (error) {
+
+        console.error(error);
+
+        const nearbyUrl =
+            "https://www.google.com/maps/search/" +
+            encodeURIComponent(def.label) +
+            "/@" +
+            latitude + "," + longitude + ",14z";
+
+        document.getElementById("mapStatus").innerHTML =
+            "⚠️ Nearby-place data is temporarily unavailable. " +
+            `<a href="${nearbyUrl}" target="_blank" rel="noopener">
+                Open nearby ${mapEscape(def.label)} in Google Maps
+             </a>.`;
+    }
+}
+
+/* =====================================================
+                CLEAR MAP MARKERS
+===================================================== */
+
+function clearEmergencyMarkers() {
+    if (!disasterMap) return;
+
+    emergencyMarkers.forEach(function (item) {
+        try {
+            if (disasterMap.hasLayer(item)) {
+                disasterMap.removeLayer(item);
+            }
+        } catch (error) {
+            console.warn(error);
+        }
+    });
+
+    emergencyMarkers = [];
+}
+
+/* =====================================================
+                ROUTE TO A PLACE
+   OSRM gives an actual road route rather than a straight
+   demonstration line.
+===================================================== */
+
+async function routeToPlace(destLat, destLon, placeName) {
+
+    if (
+        latitude === null ||
+        longitude === null ||
+        !disasterMap
+    ) {
+        alert("📍 Your GPS location is not available.");
+        return;
+    }
+
+    clearEmergencyMarkers();
+
+    document.getElementById("mapStatus").textContent =
+        "🛣️ Calculating road route to " + placeName + "...";
+
+    const start = Number(longitude) + "," + Number(latitude);
+    const end = Number(destLon) + "," + Number(destLat);
+
+    const url =
+        "https://router.project-osrm.org/route/v1/driving/" +
+        start + ";" + end +
+        "?overview=full&geometries=geojson";
+
+    try {
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error("Routing service unavailable");
+        }
+
+        const data = await response.json();
+
+        if (
+            data.code !== "Ok" ||
+            !data.routes ||
+            !data.routes.length
+        ) {
+            throw new Error("No route found");
+        }
+
+        const route = data.routes[0];
+
+        const line = L.geoJSON(route.geometry, {
+            style: {
+                color: "#1565c0",
+                weight: 6,
+                opacity: 0.85
+            }
+        }).addTo(disasterMap);
+
+        emergencyMarkers.push(line);
+
+        const destination = L.marker([Number(destLat), Number(destLon)])
+            .addTo(disasterMap)
+            .bindPopup(
+                "<b>🛣️ ROUTE DESTINATION</b><br><br>" +
+                mapEscape(placeName)
+            )
+            .openPopup();
+
+        emergencyMarkers.push(destination);
+
+        disasterMap.fitBounds(line.getBounds(), {
+            padding: [35, 35]
+        });
+
+        const km = (route.distance / 1000).toFixed(2);
+        const minutes = Math.round(route.duration / 60);
+
+        document.getElementById("mapStatus").innerHTML =
+            "🛣️ Route to <b>" + mapEscape(placeName) +
+            "</b>: approximately " + km +
+            " km / " + minutes + " min.";
+
+    } catch (error) {
+
+        console.error(error);
+
+        const googleRoute =
+            "https://www.google.com/maps/dir/?api=1" +
+            "&origin=" + encodeURIComponent(latitude + "," + longitude) +
+            "&destination=" + encodeURIComponent(destLat + "," + destLon);
+
+        document.getElementById("mapStatus").innerHTML =
+            "⚠️ Road routing service is unavailable. " +
+            `<a href="${googleRoute}" target="_blank" rel="noopener">
+                Open route in Google Maps
+             </a>.`;
+    }
+}
+
+/* =====================================================
+                SAFE ZONE
+===================================================== */
+
+function showSafeZone() {
+
+    if (!disasterMap || latitude === null || longitude === null) {
+        alert("📍 Please detect your location first.");
+        return;
+    }
+
+    clearEmergencyMarkers();
+
+    const safeZone = L.circle(
+        [Number(latitude), Number(longitude)],
+        {
+            radius: 2000,
+            color: "#2e7d32",
+            fillColor: "#2e7d32",
+            fillOpacity: 0.15,
+            weight: 3
+        }
+    ).addTo(disasterMap);
+
+    safeZone.bindPopup(
+        "<b>🛡️ SAFE ZONE</b><br><br>" +
+        "A 2 km reference area around your detected location.<br><br>" +
+        "Follow official evacuation instructions."
+    ).openPopup();
+
+    emergencyMarkers.push(safeZone);
+
+    disasterMap.setView(
+        [Number(latitude), Number(longitude)],
+        14
+    );
+
+    document.getElementById("mapStatus").textContent =
+        "🛡️ Safe-zone reference area highlighted.";
+}
+
+/* =====================================================
+                SAFE ROUTE
+   If nearby-place markers exist, route to the first one.
+   Otherwise open the nearby shelter search so the user
+   can select an actual place.
+===================================================== */
+
+async function showSafeRoute() {
+
+    if (!disasterMap || latitude === null || longitude === null) {
+        alert("📍 Please detect your location first.");
+        return;
+    }
+
+    /* Existing nearby markers may be destination markers. */
+    if (emergencyMarkers.length > 0) {
+        const first = emergencyMarkers.find(function (item) {
+            return item instanceof L.Marker;
+        });
+
+        if (first) {
+            const point = first.getLatLng();
+            routeToPlace(
+                point.lat,
+                point.lng,
+                "Nearby emergency location"
+            );
+            return;
+        }
+    }
+
+    document.getElementById("mapStatus").textContent =
+        "🏠 Find a real nearby shelter first, then press Route Here.";
+
+    await showNearbyPlaces("shelter");
+}
+
+/* =====================================================
+                SHARE LOCATION
+===================================================== */
+
+function shareLocation() {
+
+    if (latitude === null || longitude === null) {
+        alert("📍 Location is not available.");
+        return;
+    }
+
+    const mapsUrl =
+        "https://www.google.com/maps?q=" +
+        latitude + "," + longitude;
+
+    const locationText =
+        "🚨 DISASTERSAFE EMERGENCY LOCATION\n\n" +
+        "📍 Latitude: " + Number(latitude).toFixed(6) + "\n" +
+        "📍 Longitude: " + Number(longitude).toFixed(6) + "\n" +
+        "🗺️ Map: " + mapsUrl + "\n\n" +
+        "Please provide emergency assistance.";
+
+    if (navigator.share) {
+        navigator.share({
+            title: "DisasterSafe Emergency Location",
+            text: locationText
+        }).catch(function (error) {
+            console.log(error);
+        });
+    } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(locationText)
+            .then(function () {
+                alert("📍 Emergency location copied!\n\n" + locationText);
+            })
+            .catch(function () {
+                prompt("Copy emergency location:", locationText);
+            });
+    } else {
+        prompt("Copy emergency location:", locationText);
+    }
+}
+
+/* =====================================================
+                SEND SOS
+===================================================== */
+
+function sendSOS() {
+
+    if (latitude === null || longitude === null) {
+        alert("📍 Please detect your location first.");
+        return;
+    }
+
+    if (disasterMap) {
+        const sosCircle = L.circle(
+            [Number(latitude), Number(longitude)],
+            {
+                radius: 500,
+                color: "#d32f2f",
+                fillColor: "#d32f2f",
+                fillOpacity: 0.25
+            }
+        ).addTo(disasterMap);
+
+        emergencyMarkers.push(sosCircle);
+
+        disasterMap.setView(
+            [Number(latitude), Number(longitude)],
+            17
+        );
+
+        if (disasterMarker) {
+            disasterMarker.openPopup();
+        }
+    }
+
+    document.getElementById("mapStatus").textContent =
+        "🚨 SOS ACTIVE — your location is highlighted.";
+
+    const mapsUrl =
+        "https://www.google.com/maps?q=" +
+        latitude + "," + longitude;
+
+    const sosMessage =
+        "🚨 SOS EMERGENCY!\n\n" +
+        "I need immediate help.\n\n" +
+        "📍 Latitude: " + Number(latitude).toFixed(6) + "\n" +
+        "📍 Longitude: " + Number(longitude).toFixed(6) + "\n" +
+        "🗺️ " + mapsUrl;
+
+    if (navigator.share) {
+        navigator.share({
+            title: "🚨 SOS Emergency",
+            text: sosMessage
+        }).catch(function (error) {
+            console.log(error);
+        });
+    } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(sosMessage)
+            .then(function () {
+                alert(
+                    "🚨 SOS message copied!\n\n" +
+                    "Send it to your emergency contacts."
+                );
+            })
+            .catch(function () {
+                prompt("Copy SOS message:", sosMessage);
+            });
+    } else {
+        prompt("Copy SOS message:", sosMessage);
+    }
+}
+
+/* =====================================================
+                SAFETY INSTRUCTIONS
+===================================================== */
+
+function showSafetyTipsOnMap() {
+
+    if (!disasterMap || latitude === null || longitude === null) {
+        alert("📍 Please detect your location first.");
+        return;
+    }
+
+    disasterMap.setView(
+        [Number(latitude), Number(longitude)],
+        15
+    );
+
+    L.popup()
+        .setLatLng([Number(latitude), Number(longitude)])
+        .setContent(`
+            <div style="min-width:240px">
+                <h3>🛡️ Safety Instructions</h3>
+                <hr>
+                <p>• Stay calm.</p>
+                <p>• Move away from danger.</p>
+                <p>• Keep your phone charged.</p>
+                <p>• Follow official instructions.</p>
+                <p>• Do not enter damaged buildings.</p>
+                <p>• Help children and elderly people.</p>
+                <p>• Keep emergency supplies with you.</p>
+            </div>
+        `)
+        .openOn(disasterMap);
+}
+
+/* =====================================================
+                CLEAR MAP ACTIONS
+===================================================== */
+
+function clearMapActions() {
+
+    if (!disasterMap) return;
+
+    clearEmergencyMarkers();
+
+    if (dangerCircle && !disasterMap.hasLayer(dangerCircle)) {
+        dangerCircle.addTo(disasterMap);
+    }
+
+    if (latitude !== null && longitude !== null) {
+        disasterMap.setView(
+            [Number(latitude), Number(longitude)],
+            15
+        );
+    }
+
+    if (disasterMarker) {
+        disasterMarker.openPopup();
+    }
+
+    document.getElementById("mapStatus").textContent =
+        "📍 Showing your emergency location.";
+}
+
+/* =====================================================
+        BETTER LOCATION ERROR MESSAGE
+===================================================== */
+
+function getLocationErrorMessage(error) {
+
+    if (error && error.code === 1) {
+        return "❌ Location permission denied. Allow location access in browser settings.";
+    }
+
+    if (error && error.code === 2) {
+        return "❌ Location unavailable. Turn on GPS/location services and check your internet connection.";
+    }
+
+    if (error && error.code === 3) {
+        return "❌ Location request timed out. Try Detect again.";
+    }
+
+    return "❌ Unable to detect your location.";
+}
+
+/*
+ * Override the original location detector with a version that:
+ * - works on localhost/HTTPS,
+ * - immediately stores GPS coordinates,
+ * - updates the map if it already exists,
+ * - explains the file:// security limitation.
+ */
+function detectLocation() {
+
+    const locationField = document.getElementById("userLocation");
+    const status = document.getElementById("locationStatus");
+
+    if (!navigator.geolocation) {
+        status.textContent =
+            "❌ Geolocation is not supported by this browser.";
+        return;
+    }
+
+    if (!window.isSecureContext &&
+        location.protocol !== "file:") {
+        status.textContent =
+            "⚠️ Browser security may block GPS. Open this project on localhost or HTTPS.";
+    }
+
+    locationField.value = "Detecting current location...";
+    status.textContent = "📡 Getting your GPS location...";
+
+    navigator.geolocation.getCurrentPosition(
+        async function (position) {
+
+            latitude = Number(position.coords.latitude);
+            longitude = Number(position.coords.longitude);
+
+            const coordinates =
+                latitude.toFixed(6) + ", " +
+                longitude.toFixed(6);
+
+            /* Coordinates are enough to submit the report. */
+            locationField.value = coordinates;
+            status.textContent =
+                "📍 GPS detected: " + coordinates;
+
+            try {
+                const response = await fetch(
+                    "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" +
+                    encodeURIComponent(latitude) +
+                    "&lon=" +
+                    encodeURIComponent(longitude),
+                    {
+                        headers: {
+                            "Accept": "application/json"
+                        }
+                    }
+                );
+
+                if (response.ok) {
+                    const place = await response.json();
+
+                    if (place.display_name) {
+                        locationField.value = place.display_name;
+                        status.textContent =
+                            "📍 Location detected. GPS: " + coordinates;
+                    }
+                }
+            } catch (error) {
+                console.warn("Reverse geocoding unavailable:", error);
+            }
+
+            /* If a map already exists, immediately move it to the new GPS. */
+            if (disasterMap) {
+                disasterMap.setView(
+                    [latitude, longitude],
+                    15
+                );
+                disasterMap.invalidateSize(true);
+            }
+        },
+
+        function (error) {
+            locationField.value = "";
+            status.textContent = getLocationErrorMessage(error);
+
+            if (error && error.code === 1) {
+                alert(
+                    "Location permission was denied.\n\n" +
+                    "Allow location access for this site and click Detect again."
+                );
+            }
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 20000,
+            maximumAge: 0
+        }
+    );
+}
+
+/* Make sure the map recalculates its size whenever the report page
+   becomes visible. This fixes blank/grey Leaflet maps after navigation. */
+const originalShowPage = window.showPage;
+
+window.showPage = function (pageId) {
+
+    originalShowPage(pageId);
+
+    if (pageId === "report" && disasterMap) {
+        setTimeout(function () {
+            disasterMap.invalidateSize(true);
+        }, 200);
+    }
+};
+
+/* Also fix the map when the browser window changes size. */
+window.addEventListener("resize", function () {
+    if (disasterMap) {
+        disasterMap.invalidateSize(false);
+    }
+});
+
+
+// Rotate the displayed emergency number every 4 seconds.
+setInterval(function(){
+    emergencyLoopIndex=(emergencyLoopIndex+1)%emergencyNumbers.length;
+    updateEmergencyNumber();
+},4000);
+updateEmergencyNumber();
+
+</script>
+
+</body>
+
+</html>
